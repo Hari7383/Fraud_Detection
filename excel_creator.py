@@ -44,16 +44,33 @@ df = pd.DataFrame(data, columns=[
     'transaction_type', 'transaction_time', 'transaction_amount'
 ])
 
-# Print first 5 rows to verify data generation
-print("Sample data (first 5 rows):")
-print(df.head())
+# Define fraud classification logic (example):
+def classify_fraud(row):
+    if row['transaction_type'] == 'refund' and row['transaction_amount'] > 300:
+        return 'fraud'
+    elif row['transaction_type'] == 'purchase' and row['transaction_amount'] > 450:
+        return 'fraud'
+    else:
+        return 'not fraud'
 
-# Save to Excel
+classified_df = df[['transaction_id']].copy()
+classified_df['fraud_status'] = df.apply(classify_fraud, axis=1)
+
+# Calculate starting column for classified_df: 
+# main df has 7 columns (0-indexed columns 0 to 6), so startcol=7 to write classified_df next to it
+start_col = len(df.columns) + 1  # adding 1 column as a gap
+
 filename = "fraud_detection_sample_data.xlsx"
-df.to_excel(filename, index=False)
 
-# Check if file is created
+with pd.ExcelWriter(filename, engine='openpyxl') as writer:
+    # Write main data starting at cell A1 (row=0, col=0)
+    df.to_excel(writer, sheet_name='Transactions', index=False)
+    
+    # Write classified_df starting at first row, after the last column of main data (+1 for gap)
+    classified_df.to_excel(writer, sheet_name='Transactions', index=False, startcol=start_col)
+
+# Confirm file creation
 if os.path.exists(filename):
-    print(f"\nExcel file '{filename}' created successfully in the directory:\n{os.getcwd()}")
+    print(f"\nExcel file '{filename}' created successfully in:\n{os.getcwd()}")
 else:
-    print("\nFailed to create the Excel file.")   
+    print("\nFailed to create the Excel file.")
