@@ -1,48 +1,63 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from imblearn.over_sampling import SMOTE
+# Fraud Detection System
 
-# Load dataset
-df = pd.read_excel("/mnt/data/fraud_detection_sample_data.xlsx")
+A machine learning project that detects fraudulent financial transactions using real-world data and standard ML techniques.
 
-# Features and target
-X = df.drop("fraud_status", axis=1)
-y = df["fraud_status"]
+This repository demonstrates a full workflow from **data preprocessing** to **model training**, **evaluation**, and **interpretation** — a core requirement in real-world AI systems for fraud analytics.
 
-# Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
+---
 
-# Scale features
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+## 🚀 Project Overview
 
-# Apply SMOTE
-smote = SMOTE(random_state=42)
-X_resampled, y_resampled = smote.fit_resample(X_train_scaled, y_train)
+Fraud detection is critical in finance, ecommerce, and banking to identify unauthorized or suspicious activities. This repo uses Python, pandas, Scikit-learn, and visualization tools to:
 
-# Hyperparameter tuning for KNN
-param_grid = {"n_neighbors": list(range(1, 21))}
-grid = GridSearchCV(KNeighborsClassifier(), param_grid, cv=5, scoring="accuracy")
-grid.fit(X_resampled, y_resampled)
+✔ Explore dataset characteristics  
+✔ Clean and preprocess data  
+✔ Train ML models  
+✔ Evaluate performance  
+✔ Provide insights on model behavior
 
-# Best K
-best_k = grid.best_params_["n_neighbors"]
-print(f"🔥 Best K found: {best_k}")
+This project is ideal for:
+- Data scientists learning classification problems
+- Portfolio demonstration of real-world ML workflows
+- Practicing model evaluation and feature engineering
 
-# Train final KNN with best K
-knn_best = KNeighborsClassifier(n_neighbors=best_k)
-knn_best.fit(X_resampled, y_resampled)
+---
 
-# Predictions
-y_pred = knn_best.predict(X_test_scaled)
+## 🧠 Key Features
 
-# Evaluation
-print("✅ Accuracy:", accuracy_score(y_test, y_pred))
-print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
-print("\nClassification Report:\n", classification_report(y_test, y_pred))
+| Component | Description |
+|-----------|-------------|
+| Data Cleaning | Handle missing values, scaling, normalization |
+| Exploratory Analysis | Visualize class imbalance and feature distributions |
+| Multiple Models | Compare different classifiers like Random Forest, XGBoost |
+| Performance Metrics | Accuracy, Precision, Recall, ROC-AUC |
+| Visualization | Confusion matrix, feature importance |
+
+---
+
+## 🛠️ Tech Stack
+
+- Python 3.8+
+- scikit-learn
+- pandas, NumPy
+- Matplotlib, Seaborn
+- Jupyter Notebook environment
+
+---
+
+## 📦 Installation
+
+Clone the repo:
+
+```bash
+git clone https://github.com/Hari7383/Fraud_Detection.git
+cd Fraud_Detection
+```
+
+1️⃣ Create a virtual environment (optional but recommended):
+```
+python -m venv venv
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
+pip install -r requirements.txt
+```
